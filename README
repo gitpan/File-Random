@@ -1,10 +1,21 @@
-File::Random Version 0.13
+File::Random Version 0.15
 =========================
 NAME
     File::Random - Perl module for random selecting of a file
 
+INSTALLATION
+
+The classic
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+    
+will do this job.
+
 SYNOPSIS
-      use File::Random qw/random_file/;
+      use File::Random qw/:all/;
  
       my $fname  = random_file();
 
@@ -12,13 +23,15 @@ SYNOPSIS
   
       my $random_gif = random_file(-dir       => $dir,
                                    -check     => qr/\.gif$/,
-                                                               -recursive => 1);
+                                   -recursive => 1);
                                                            
       my $no_exe     = random_file(-dir   => $dir,
                                    -check => sub {! -x});
                                                            
       my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
       my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
+      # or the shorter
+      my $joke = corf(-dir => '/usr/lib/jokes');
   
       my $word_of_the_day = random_line('/usr/share/dict/words');
 
@@ -44,77 +57,6 @@ DESCRIPTION
 
     The simple standard job of selecting a random line from a file is
     implemented, too.
-
-  FUNCTION random_file
-    Returns a randomly selected file(name) from the specified directory If
-    the directory is empty, undef will be returned. There 3 options:
-
-      my $file = random_file(
-         -dir         => $dir, 
-             -check       => qr/.../, # or sub { .... }
-             -recursive   => 1        # or 0
-      );
-
-    -dir (-d or -directory)
-        Specifies the directory where file has to come from.
-
-        Is the -dir option missing, a random file from the current directory
-        will be used. That means '.' is the default for the -dir option.
-
-    -check (-c)
-        With the -check option you can either define a regex every filename
-        has to follow, or a sub routine which gets the filename as argument.
-        The filename includes the relative path (from the -dir directory or
-        the current directory).
-
-        Note, that -check doesn't accept anything else than a regexp or a
-        subroutine. A string like '/.../' won't work. I still work on that.
-
-        The default is no checking (undef).
-
-    -recursive (-r or -rec)
-        Enables, that subdirectories are scanned for files, too. Every file,
-        independent from its position in the file tree, has the same chance
-        to be choosen. Now the relative path from the given subdirectory or
-        the current directory of the randomly choosen file is included to
-        the file name.
-
-        Every true value sets recursive behaviour on, every false value
-        switches off. The default if false (undef).
-
-        Note, that I programmed the recursive routine very defendly (using
-        File::Find). So switching -recursive on, slowers the program a bit
-        :-)
-
-    unknown options
-        Gives a warning. Unknown options are ignored. Note, that upper/lower
-        case makes a difference. (Maybe, once a day I'll change it)
-
-  FUNCTION content_of_random_file
-        Returns the content of a randomly selected random file. In list
-        context it returns an array of the lines of the selected file, in
-        scalar context it returns a multiline string with whole the file.
-        The lines aren't chomped.
-
-        This function has the same parameter and a similar behaviour to the
-        random_file method. Note, that -check still gets the filename and
-        not the filecontent.
-
-  FUNCTION random_line($filename)
-        Returns a random_line from a (existing) file.
-
-        If the file is empty, undef is returned.
-
-  EXPORT
-    None by default.
-
-    You can export the function random_file with "use File::Random
-    qw/random_file/;", "use File::Random qw/content_of_random_file/" or with
-    the more simple "use File::Random qw/:all/;".
-
-    I didn't want to pollute namespaces as I could imagine, users write
-    methods random_file to create a file with random content. If you think
-    I'm paranoid, please tell me, then I'll take it into the export.
 
 DEPENDENCIES
     This module requires these other modules and libraries:
@@ -145,14 +87,3 @@ AUTHOR
 
 SEE ALSO
     Tie::Pick Data::Random
-
-INSTALLATION
-
-The classic
-
-    perl Makefile.PL
-    make
-    make test
-    make install
-    
-will do this job.

@@ -11,18 +11,26 @@ require Exporter;
 
 our @ISA = qw(Exporter);
 
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	random_file
-	content_of_random_file
+our %EXPORT_TAGS = ( 
+  ':all' => [ qw(
+	  random_file
+	  content_of_random_file corf
+      random_line
+  ) ],
+  # and for some backward compability
+  'all' => [ qw(
+	  random_file
+	content_of_random_file corf
     random_line
-) ] );
+  ) ]
+);
 
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+our @EXPORT_OK = ( @{ $EXPORT_TAGS{':all'} }, 'corf' );
 
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.13';
+our $VERSION = '0.15';
 
 sub _standard_dir($);
 sub _dir(%);
@@ -33,6 +41,8 @@ sub random_file {
 	return $recursive ? _random_file_recursive    (@params)
 	                  : _random_file_non_recursive(@params);
 }
+
+*corf = *content_of_random_file;
 
 sub content_of_random_file {
 	my %args = @_;
@@ -145,7 +155,7 @@ File::Random - Perl module for random selecting of a file
 
 =head1 SYNOPSIS
 
-  use File::Random qw/random_file/;
+  use File::Random qw/:all/;
  
   my $fname  = random_file();
 
@@ -160,6 +170,8 @@ File::Random - Perl module for random selecting of a file
 							   
   my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
   my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
+  # or the shorter
+  my $joke = corf(-dir => '/usr/lib/jokes');
   
   my $word_of_the_day = random_line('/usr/share/dict/words');
 
@@ -185,16 +197,22 @@ randomly selection for subdirectory searching with special check-routines.
 
 The simple standard job of selecting a random line from a file is implemented, too.
   
-=head2 FUNCTION random_file
+=head1 FUNCTION
+
+=head2 random_file
+
+=item random_file
 
 Returns a randomly selected file(name) from the specified directory
-If the directory is empty, undef will be returned. There 3 options:
+If the directory is empty, undef is returned. There are 3 options:
 
   my $file = random_file(
      -dir         => $dir, 
 	 -check       => qr/.../, # or sub { .... }
 	 -recursive   => 1        # or 0
   );
+  
+Let's have a look to the options:
 
 =over
 
@@ -202,22 +220,23 @@ If the directory is empty, undef will be returned. There 3 options:
 
 Specifies the directory where file has to come from.
 
-Is the -dir option missing,
+If no C<-dir> option is specified,
 a random file from the current directory will be used.
-That means '.' is the default for the -dir option.
+That means '.' is the default for the C<-dir> option.
 
 =item -check (-c)
 
-With the -check option you can either define
+With the C<-check> option you can either define
 a regex every filename has to follow,
 or a sub routine which gets the filename as argument.
-The filename includes the relative path 
-(from the -dir directory or the current directory).
+The filename passed as argument includes the relative path 
+(relative to the C<-dir> directory or the current directory).
+The argument is passed implicit as localized value of C<$_> and
+it is also the first parameter on the argument array C<$_[0]>.
 
-Note, that -check doesn't accept anything else
+Note, that C<-check> doesn't accept anything else
 than a regexp or a subroutine.
 A string like '/.../' won't work.
-I still work on that.
 
 The default is no checking (undef).
 
@@ -234,8 +253,10 @@ every false value switches off.
 The default if false (undef).
 
 Note, that I programmed the recursive routine very defendly
-(using File::Find).
+(using C<File::Find>).
 So switching -recursive on, slowers the program a bit :-)
+Please look to the C<File::Find> module for any details and bugs
+related to recursive searching of files.
 
 =item unknown options
 
@@ -244,22 +265,36 @@ Unknown options are ignored.
 Note, that upper/lower case makes a difference.
 (Maybe, once a day I'll change it)
 
-=head2 FUNCTION content_of_random_file
+=back
+
+=head2 FUNCTION content_of_random_file  (or corf)
 
 Returns the content of a randomly selected random file.
 In list context it returns an array of the lines of the selected file,
 in scalar context it returns a multiline string with whole the file.
 The lines aren't chomped.
 
-This function has the same parameter and a similar behaviour to the
-random_file method. 
-Note, that -check still gets the filename and not the filecontent.
+This function has the same parameters and a similar behaviour to the
+C<random_file> method. 
+Note, that C<-check> option still gets passed the filename and 
+not the file content.
+
+Instead of the long C<content_of_random_file>,
+you can also use the alias C<corf>
+(but don't forget to say either C<use File::Random qw/:all/> or
+C<use File::Random qw/corf/>)
 
 =head2 FUNCTION random_line($filename)
 
-Returns a random_line from a (existing) file.
+Returns a random_line from an (existing) file.
 
 If the file is empty, undef is returned.
+
+The algorithm used is the one from the FAQ.
+See C<perldoc -q "random line"> for details.
+It also works on large files,
+as the algorithm only needs two lines of the file
+at the same time in memory.
 
 =back
 
@@ -305,32 +340,19 @@ not by the File::Random itself.
 
 =head1 TODO
 
-The -check option doesn't except a string looking like a regexp.
-In future versions there should be the possibility of passing a string
-like '/..../' instead of the regexp qr/.../';
-
 A C<-firstline> or C<-lines => [1 .. 10]> option for the
 C<content_of_random_file> could be useful. 
-Later something like C<-randomline> option should be implemented, too.
-(Making the same as C<random_line( random_file( ... ) )>)
-C<content_of_random_file> is very long,
-perhaps I'll implement a synonym C<corf>.
 
 Also speed could be improved,
 as I tried to write the code very readable,
 but wasted sometimes a little bit speed.
-(E.g. missing -check is translated to something like -check => sub{1})
-As Functionality and Readability is more important than speed,
-I'll wait a little bit with speeding up :-)
 
 Please feel free to suggest me anything what could be useful.
 
 =head1 BUGS
 
-Oh, I hope none. I still have more test lines than function code.
-However, it's still BETA code.
-
-Well, but because I want some random data, it's a little bit hard to test.
+Well, because as this module handles some random data, 
+it's a bit harder to test.
 So a test could be wrong, allthough everything is O.K..
 To avoid it, I let many tests run,
 so that the chances for misproofing should be < 0.0000000001% or so.

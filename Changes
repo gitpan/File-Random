@@ -1,5 +1,15 @@
 Revision history for Perl extension File::Random.
 
+0.15  Fri Aug 16
+        - improved the documentation
+
+0.14  Mon Jul 27
+        - removed Bug
+          you had to say
+            use File::Random qw/all/ instead of the usual
+            use File::Random qw/:all/;
+        - added corf as alias to content_of_random_file
+
 0.13  Tue Jul 16
         - print *carped* warnings when random_file or content_of_random_file are called with unknown parameters
         - use now Test::Warn to test it
