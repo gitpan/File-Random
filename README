@@ -1,4 +1,4 @@
-File/Random version 0.04
+File/Random version 0.05
 ========================
 NAME
     File::Random - Perl module for random selecting of a file
@@ -66,13 +66,16 @@ DESCRIPTION
     -recursive
         Enables, that subdirectories are scanned for files, too. Every file,
         independent from its position in the file tree, has the same chance
-        to be choosen.
+        to be choosen. Now the relative path from the given subdirectory or
+        the current directory of the randomly choosen file is included to
+        the file name.
 
         Every true value sets recursive behaviour on, every false value
         switches off. The default if false (undef).
 
         Note, that I programmed the recursive routine very defendly (using
-        File::Find). So switch recursive on slowers the program a bit :-)
+        File::Find). So switching -recursive on, slowers the program a bit
+        :-)
 
   EXPORT
 

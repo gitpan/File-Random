@@ -12,6 +12,7 @@ our @ISA = qw(Exporter);
 
 our %EXPORT_TAGS = ( 'all' => [ qw(
 	random_file
+	content_of_random_file
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -19,7 +20,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 sub random_file {
@@ -49,11 +50,16 @@ sub _random_file_recursive {
 	my $accept_routine = sub {
 		return unless -f; 
 		return unless _valid_file($check,$_);
-		$fname = $_ if rand($i++) < 1;	# Algorithm from Cookbook, chapter 8.6
+		# Algorithm from Cookbook, chapter 8.6
+		# similar to selecting a random line from a file
+		if (rand($i++) < 1) {
+			$File::Find::name =~ m:^$dir[/\\]*(.*)$:;
+			$fname = $1;
+		}
 	};
 	find($accept_routine, $dir);
-	
-	return $fname;
+
+	return $fname;	
 }
 
 sub _valid_file {
@@ -78,7 +84,7 @@ sub _params_random_file {
 
 	$dir =~ s:[/\\]+$::;                 # /home/xyz != /home/xyz/
 	
-	unless ((scalar ref $check) =~ /^(Regexp|CODE)$/) {
+	unless (!defined($check) or (scalar ref($check) =~ /^(Regexp|CODE)$/)) {
 		die "-check Parameter has to be either a Regexp or a sub routine,".
 		    "not a '" . ref($check) . "'";
 	}
@@ -167,6 +173,8 @@ The default is no checking (undef).
 Enables, that subdirectories are scanned for files, too.
 Every file, independent from its position in the file tree,
 has the same chance to be choosen.
+Now the relative path from the given subdirectory or the current directory
+of the randomly choosen file is included to the file name.
 
 Every true value sets recursive behaviour on,
 every false value switches off.
@@ -174,7 +182,7 @@ The default if false (undef).
 
 Note, that I programmed the recursive routine very defendly
 (using File::Find).
-So switch recursive on slowers the program a bit :-)
+So switching -recursive on, slowers the program a bit :-)
 
 =back
 
@@ -210,6 +218,16 @@ or even:
 
 I also want to add a method C<content_of_random_file> and C<random_line>.
 
+Also speed could be improved,
+as I tried to write the code very readable,
+but wasted sometimes a little bit speed.
+(E.g. missing -check is translated to something like -check => sub{1})
+As Functionality and Readability is more important than speed,
+I'll wait a little bit with speeding up :-)
+
+Using unknown params should bring a warning.
+At the moment they are ignored.
+
 The next thing, I'll implement is the content_of_random_file method.
 
 Just have a look some hours later.
@@ -217,12 +235,18 @@ Just have a look some hours later.
 =head1 BUGS
 
 Oh, I hope none. I still have more test lines than function code.
+However, it's still BETA code.
 
 Well, but because I want some random data, it's a little bit hard to test.
 So a test could be wrong, allthough everything is O.K..
 To avoid it, I let many tests run,
 so that the chances for misproofing should be < 0.0000000001% or so.
 Even it has the disadvantage that the tests need really long :-(
+
+I'm not definitly sure whether my test routines runs on OS,
+with path seperators different of '/', like in Win with '\\'.
+Perhaps anybody can try it and tell me the result.
+[But remember Win* is definitly the greater bug.]
 
 =head1 COPYRIGHT
 

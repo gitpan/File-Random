@@ -1,5 +1,9 @@
 Revision history for Perl extension File::Random.
 
+0.05  Thu Jun 20
+        - changed return value of random_file when using recursive option
+          [now the relative path is a part of the return, not only a filename]
+
 0.04  Wed Jun 19
         - -recursive option implemented
 
