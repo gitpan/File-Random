@@ -21,7 +21,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 
 sub _standard_dir($);
 
@@ -104,6 +104,10 @@ sub _params_random_file {
 		exists $args{$_} and ! $args{$_} and 
 		die "Parameter $_ is declared with a false value";
 	}
+    
+    foreach (keys %args) {
+        /^\-(dir|check|recursive)/ or warn "Unknown option '$_'";
+    }
 	
 	my $dir   = _standard_dir $args{-dir};    
 	my $check = $args{-check} || sub {"always O.K."};
@@ -224,6 +228,13 @@ Note, that I programmed the recursive routine very defendly
 (using File::Find).
 So switching -recursive on, slowers the program a bit :-)
 
+=item unknown options
+
+Gives a warning.
+Unknown options are ignored.
+Note, that upper/lower case makes a difference.
+(Maybe, once a day I'll change it)
+
 =head2 FUNCTION content_of_random_file
 
 Returns the content of a randomly selected random file.
@@ -319,8 +330,8 @@ but wasted sometimes a little bit speed.
 As Functionality and Readability is more important than speed,
 I'll wait a little bit with speeding up :-)
 
-Using unknown params should bring a warning.
-At the moment they are ignored.
+Perhaps it's good to say '-DIR', '-dir' and the simple 'dir' should
+be equivalent options. I'll think about, when I implement aliases.
 
 The next thing, I'll implement is that unknown params brings a warning.
 

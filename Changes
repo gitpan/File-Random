@@ -1,9 +1,12 @@
 Revision history for Perl extension File::Random.
 
-0.10  Wed Jun 27
+0.11  The Jun 27
+        - print warnings when random_file or content_of_random_file are called with unknown parameters
+
+0.10  Wed Jun 26
         - random_line method implemented
 
-0.09  Wed Jun 27
+0.09  Wed Jun 26
         - fixed: Forgot to add Test::Class as required module to the Makefile.PL
 
 0.08  Wed Jun 26

@@ -51,7 +51,7 @@ sub call_random_file {
 	my ($self, %arg) = @_;
 	
 	my ($path, $home) = @arg{'-path', '-home'};
-	#delete @arg{'-path', '-home'};
+	delete @arg{'-path', '-home'};
 
 	# either we know the directory directly
 	return $self->random_file(%arg) if $arg{-dir};

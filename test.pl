@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test::More;
-BEGIN { plan tests => 73 + 5};
+BEGIN { plan tests => 78 + 2*8};
 use File::Random;
 ok(1); # If we made it this far, we're ok.
 
