@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use File::Find;
+use Carp;
 
 require Exporter;
 
@@ -21,7 +22,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.12';
+our $VERSION = '0.13';
 
 sub _standard_dir($);
 sub _dir(%);
@@ -114,7 +115,7 @@ sub _params_random_file {
     foreach (keys %args) {
         /^\-(d|dir|directory|
              c|check|
-             r|rec|recursive)$/x or warn "Unknown option '$_'";
+             r|rec|recursive)$/x or carp "Unknown option '$_'";
     }
     
 	my $dir   = _standard_dir _dir %args;    

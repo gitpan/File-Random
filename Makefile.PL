@@ -18,6 +18,8 @@ WriteMakefile(
     	Test::Exception			=> 0.10,	# minimal version depends on Test::Class
     	Test::More			    => 0.44,
 
+        Test::Warn                      => 0.03,
+
 		Set::Scalar         	=> 0,       # didn't know the minimal version
         File::Temp              => 0
 	}, # e.g., Module::Name => 1.1

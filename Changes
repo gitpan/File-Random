@@ -1,5 +1,9 @@
 Revision history for Perl extension File::Random.
 
+0.13  Tue Jul 16
+        - print *carped* warnings when random_file or content_of_random_file are called with unknown parameters
+        - use now Test::Warn to test it
+
 0.12  Wed Jul 03
         - created aliases -dir = -d = -directory and
                           -recursive = -r = -rec
