@@ -20,8 +20,8 @@ our %EXPORT_TAGS = (
   # and for some backward compability
   'all' => [ qw(
 	  random_file
-	content_of_random_file corf
-    random_line
+   	  content_of_random_file corf
+      random_line
   ) ]
 );
 
@@ -30,7 +30,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{':all'} }, 'corf' );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 sub _standard_dir($);
 sub _dir(%);
@@ -57,14 +57,32 @@ sub content_of_random_file {
 }
 
 sub random_line {
-    my ($fname) = @_;
+    my ($fname, $nr_of_lines) = @_;
     defined $fname or die "Need a defined filename to read a random line";
-	# Algorithm from Cookbook, chapter 8.6
-    my $line = undef;
-    open FILE, '<', $fname or die "Can't open '$fname' to read random_line";
-    rand($.) < 1 && ($line = $_) while (<FILE>);
+    unless (!defined($nr_of_lines) or $nr_of_lines =~ /^\d+$/) {
+        die "Number of random_lines should be a number, not '$nr_of_lines'";
+    }
+    defined($nr_of_lines) and $nr_of_lines == 0 and 
+        carp "doesn't make a lot of sense to return 0 random lines, " .
+             "you called me with random_line($fname,$nr_of_lines)";
+    $nr_of_lines ||= 1;
+    my @line  = ();
+    open FILE, '<', $fname or die "Can't open '$fname' to read random_line";        
+    if ($nr_of_lines == 1) {
+        # Algorithm from Cookbook, chapter 8.6
+        rand($.) < 1 && ($line[0] = $_) while (<FILE>);
+    } else {
+        wantarray or
+            carp "random_line($fname,$nr_of_lines) was called in scalar context, ".
+                 "what doesn't make a lot sense";
+        while (<FILE>) {
+            for my $lnr (0 .. $nr_of_lines-1) {
+                $line[$lnr] = $_ if rand($.) < 1;
+            }
+        }
+    }
     close FILE;
-    return $line;
+    return wantarray ? @line : $line[0];
 }
 
 sub _random_file_non_recursive {
@@ -174,6 +192,7 @@ File::Random - Perl module for random selecting of a file
   my $joke = corf(-dir => '/usr/lib/jokes');
   
   my $word_of_the_day = random_line('/usr/share/dict/words');
+  my @three_words     = random_line('/usr/share/dict/words',3);
 
 =head1 DESCRIPTION
 
@@ -284,19 +303,31 @@ you can also use the alias C<corf>
 (but don't forget to say either C<use File::Random qw/:all/> or
 C<use File::Random qw/corf/>)
 
-=head2 FUNCTION random_line($filename)
+=head2 FUNCTION random_line($filename [, $nr_of_lines])
 
-Returns a random_line from an (existing) file.
+Returns one or C<$nr_of_lines> random_lines from an (existing) file.
 
 If the file is empty, undef is returned.
 
-The algorithm used is the one from the FAQ.
+The algorithm used for returning one line is the one from the FAQ.
 See C<perldoc -q "random line"> for details.
+For more than one line (C<$nr_of_lines E<gt> 1>), 
+I use nearly the same algorithm.
+Especially the returned lines aren't a sample,
+as a line could be returned doubled.
+
+The result of C<random_line($filename, $nr)> should be quite similar to
+C<map {random_line($filename)} (1 .. $nr)>, only the last way is not so efficient,
+as the file would be read C<$nr> times instead of one times.
+
 It also works on large files,
 as the algorithm only needs two lines of the file
 at the same time in memory.
 
-=back
+C<$nr_of_lines> is an optional argument which is 1 at default.
+Calling C<random_line> in scalar context with C<$nr_of_lines> greater than 1,
+gives a warning, as it doesn't make a lot of sense.
+I also gives you a warning of C<$nr_of_lines> is zero.
 
 =head2 EXPORT
 
@@ -321,6 +352,8 @@ This module requires these other modules and libraries:
   Test::Class
   Set::Scalar
   File::Temp
+  Test::Warn
+  Test::ManyParams
   
 Test::Class itselfs needs the following additional modules:
   Attribute::Handlers             
@@ -346,6 +379,14 @@ C<content_of_random_file> could be useful.
 Also speed could be improved,
 as I tried to write the code very readable,
 but wasted sometimes a little bit speed.
+
+random_line should return in list context,
+the random_lines of the wanted lines,
+so something like
+
+  my ($line1, $line2, $line3) = random_line($fname)
+  
+should work without the specification on the right side.
 
 Please feel free to suggest me anything what could be useful.
 
@@ -378,5 +419,6 @@ Janek Schleicher, E<lt>bigj@kamelfreund.deE<gt>
 
 L<Tie::Pick> 
 L<Data::Random>
+L<Algorithm::Numerical::Sample>
 
 =cut

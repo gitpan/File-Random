@@ -1,4 +1,4 @@
-File::Random Version 0.15
+File::Random Version 0.16
 =========================
 NAME
     File::Random - Perl module for random selecting of a file
@@ -31,9 +31,10 @@ SYNOPSIS
       my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
       my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
       # or the shorter
-      my $joke = corf(-dir => '/usr/lib/jokes');
+      my $joke = corf(-di r => '/usr/lib/jokes');
   
       my $word_of_the_day = random_line('/usr/share/dict/words');
+      my @three_words     = random_line('/usr/share/dict/words',3);
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
@@ -59,22 +60,30 @@ DESCRIPTION
     implemented, too.
 
 DEPENDENCIES
-    This module requires these other modules and libraries:
+  This module requires these other modules and libraries:
 
-      Test::More
-      Test::Exception
-      Test::Class
-      Set::Scalar
-      File::Temp
+    Test::More
+    Test::Exception
+    Test::Class
+    Set::Scalar
+    File::Temp
+    Test::Warn
+    Test::ManyParams
   
-    Test::Class itselfs needs the following additional modules:
-    Attribute::Handlers Class::ISA IO::File Storable Test::Builder
-    Test::Builder::Tester Test::Differences
+  Test::Class itselfs needs the following additional modules:
+    Attribute::Handlers             
+    Class::ISA                      
+    IO::File                        
+    Storable
+    Test::Builder
+    Test::Builder::Tester
+    Test::Differences    
 
-    All these modules are needed only for the tests. You can work with the
-    module even without them. These modules are only needed for my test
-    routines, not by the File::Random itself. (However, it's a good idea
-    most to install most of the modules anyway).
+  All these modules are needed only for the tests.
+  You can work with the module even without them. 
+  These modules are only needed for my test routines,
+  not by the File::Random itself.
+  (However, it's a good idea most to install most of the modules anyway).
 
 COPYRIGHT
     This Program is free software. You can change or redistribute it under
@@ -86,4 +95,4 @@ AUTHOR
     Janek Schleicher, <bigj@kamelfreund.de>
 
 SEE ALSO
-    Tie::Pick Data::Random
+    Tie::Pick Data::Random Algorithm::Numerical::Sample

@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test::More;
-BEGIN { plan tests => 266};
+BEGIN { plan tests => 278};
 use File::Random;
 ok 1, "Stupid Load test"; # If we made it this far, we're ok.
 
