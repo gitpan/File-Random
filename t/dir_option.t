@@ -69,7 +69,7 @@ foreach my $arg (EMPTY_TESTARGUMENTS) {
 	EMPTY_FOLDER: {
 		ok ! defined call_random_file($arg), 
 		    "Empty folder returns an undef value"
-		or diag "called with @{$arg}";
+		or diag "called with " . @$arg;
 	}
 
 }

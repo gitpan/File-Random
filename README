@@ -1,6 +1,5 @@
-File/Random version 0.03
+File/Random version 0.04
 ========================
-
 NAME
     File::Random - Perl module for random selecting of a file
 
@@ -11,8 +10,9 @@ SYNOPSIS
 
       my $fname2 = random_file(-dir => $dir);
   
-      my $random_gif = random_file(-dir   => $dir,
-                                   -check => qr/\.gif$/);
+      my $random_gif = random_file(-dir       => $dir,
+                                   -check     => qr/\.gif$/,
+                                                               -recursive => 1);
                                                            
       my $no_exe     = random_file(-dir   => $dir,
                                    -check => sub {! -x});
@@ -34,33 +34,52 @@ DESCRIPTION
       closedir DIR;
       my $randf = $files[rand @files];
  
-  FUNCTIONS
+    It also becomes very boring and very dangerous to write randomly
+    selection for subdirectory searching with special check-routines.
 
-    random_file(-dir => $dir, -check => $sub_or_re)
-        Returns a randomly selected file(name) from the specified directory
-        If the directory is empty, undef will be returned.
+  FUNCTION random_file
+
+    Returns a randomly selected file(name) from the specified directory If
+    the directory is empty, undef will be returned. There 3 options:
+
+      my $file = random_file(
+         -dir         => $dir, 
+             -check       => qr/.../, # or sub { .... }
+             -recursive   => 1        # or 0
+      );
+
+    -dir
+        Specifies the directory where file has to come from.
 
         Is the -dir option missing, a random file from the current directory
         will be used. That means '.' is the default for the -dir option.
 
+    -check
         With the -check option you can either define a regex every filename
         has to follow, or a sub routine which gets the filename as argument.
 
         Note, that -check doesn't accept anything else than a regexp or a
         subroutine. A string like '/.../' won't work. I still work on that.
 
-INSTALLATION
+        The default is no checking (undef).
 
-To install this module type the following:
+    -recursive
+        Enables, that subdirectories are scanned for files, too. Every file,
+        independent from its position in the file tree, has the same chance
+        to be choosen.
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+        Every true value sets recursive behaviour on, every false value
+        switches off. The default if false (undef).
 
-If you don't have Test::More, Test::Exception or Set::Scalar installed,
-make test will produce errors.
-You can work with the module even without them. 
+        Note, that I programmed the recursive routine very defendly (using
+        File::Find). So switch recursive on slowers the program a bit :-)
+
+  EXPORT
+
+    None by default.
+
+    You can export the function random_file with "use File::Random
+    qw/random_file/;" or with the more simple "use File::Random qw/:all/;".
 
 DEPENDENCIES
 
@@ -75,6 +94,9 @@ You can work with the module even without them.
 These modules are only needed for my test routines,
 not by the File::Random itself.
 (However, it's a good idea to install the modules anyway).
+
+SEE ALSO
+    the Tie::Pick manpage the Tie::Select manpage the Data::Random manpage
 
 COPYRIGHT AND LICENCE
 
