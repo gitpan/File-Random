@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test::More;
-BEGIN { plan tests => 73};
+BEGIN { plan tests => 73 + 5};
 use File::Random;
 ok(1); # If we made it this far, we're ok.
 
@@ -36,6 +36,11 @@ ContentOfRandomFileTestOptions->new()->runtests();
 
 use ContentOfRandomFileInScalarContext;
 ContentOfRandomFileInScalarContext->new()->runtests();
+diag "\n";
+
+diag "Test method random_line";
+use RandomLine;
+RandomLine->new()->runtests();
 diag "\n";
 
 1;

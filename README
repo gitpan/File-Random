@@ -1,5 +1,5 @@
-File/Random version 0.09
-========================
+File::Random - Version 0.10
+===========================
 NAME
     File::Random - Perl module for random selecting of a file
 
@@ -19,6 +19,8 @@ SYNOPSIS
                                                            
       my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
       my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
+  
+      my $word_of_the_day = random_line('/usr/share/dict/words');
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
@@ -39,9 +41,11 @@ DESCRIPTION
  
     It also becomes very boring and very dangerous to write randomly
     selection for subdirectory searching with special check-routines.
+    
+    The simple standard job of selecting a random line from a file
+    is implemented, too.
 
   FUNCTION random_file
-
     Returns a randomly selected file(name) from the specified directory If
     the directory is empty, undef will be returned. There 3 options:
 
@@ -83,7 +87,6 @@ DESCRIPTION
         :-)
 
   FUNCTION content_of_random_file
-
         Returns the content of a randomly selected random file. In list
         context it returns an array of the lines of the selected file, in
         scalar context it returns a multiline string with whole the file.
@@ -93,8 +96,12 @@ DESCRIPTION
         random_file method. Note, that -check still gets the filename and
         not the filecontent.
 
-  EXPORT
+  FUNCTION random_line($filename)
+        Returns a random_line from a (existing) file.
 
+        If the file is empty, undef is returned.
+
+  EXPORT
     None by default.
 
     You can export the function random_file with "use File::Random
@@ -112,6 +119,7 @@ DEPENDENCIES
       Test::Exception
       Test::Class
       Set::Scalar
+      File::Temp
   
     Test::Class itselfs needs the following additional modules:
     Attribute::Handlers Class::ISA IO::File Storable Test::Builder
@@ -119,8 +127,8 @@ DEPENDENCIES
 
     All these modules are needed only for the tests. You can work with the
     module even without them. These modules are only needed for my test
-    routines, not by the File::Random itself. (However, it's a good idea to
-    install the modules anyway).
+    routines, not by the File::Random itself. (However, it's a good idea
+    most to install most of the modules anyway).
 
 COPYRIGHT
     This Program is free software. You can change or redistribute it under
@@ -132,5 +140,4 @@ AUTHOR
     Janek Schleicher, <bigj@kamelfreund.de>
 
 SEE ALSO
-    the Tie::Pick manpage 
-	the Data::Random manpage
+    Tie::Pick Data::Random

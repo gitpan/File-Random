@@ -18,7 +18,8 @@ WriteMakefile(
     	Test::Exception			=> 0.10,	# minimal version depends on Test::Class
     	Test::More			    => 0.44,
 
-		Set::Scalar         	=> 0        # didn't know the minimal version
+		Set::Scalar         	=> 0,       # didn't know the minimal version
+        File::Temp              => 0
 	}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM => 'Random.pm', # retrieve abstract from module

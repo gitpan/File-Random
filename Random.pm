@@ -13,6 +13,7 @@ our @ISA = qw(Exporter);
 our %EXPORT_TAGS = ( 'all' => [ qw(
 	random_file
 	content_of_random_file
+    random_line
 ) ] );
 
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
@@ -20,7 +21,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 sub _standard_dir($);
 
@@ -41,6 +42,17 @@ sub content_of_random_file {
 	my @content = (<RANDOM_FILE>);
 	close RANDOM_FILE;
 	return wantarray ? @content : join "", @content;
+}
+
+sub random_line {
+    my ($fname) = @_;
+    defined $fname or die "Need a defined filename to read a random line";
+	# Algorithm from Cookbook, chapter 8.6
+    my $line = undef;
+    open FILE, '<', $fname or die "Can't open '$fname' to read random_line";
+    rand($.) < 1 && ($line = $_) while (<FILE>);
+    close FILE;
+    return $line;
 }
 
 sub _random_file_non_recursive {
@@ -135,6 +147,8 @@ File::Random - Perl module for random selecting of a file
 							   
   my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
   my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
+  
+  my $word_of_the_day = random_line('/usr/share/dict/words');
 
 =head1 DESCRIPTION
 
@@ -155,6 +169,8 @@ or
  
 It also becomes very boring and very dangerous to write 
 randomly selection for subdirectory searching with special check-routines.
+
+The simple standard job of selecting a random line from a file is implemented, too.
   
 =head2 FUNCTION random_file
 
@@ -219,6 +235,12 @@ This function has the same parameter and a similar behaviour to the
 random_file method. 
 Note, that -check still gets the filename and not the filecontent.
 
+=head2 FUNCTION random_line($filename)
+
+Returns a random_line from a (existing) file.
+
+If the file is empty, undef is returned.
+
 =back
 
 =head2 EXPORT
@@ -243,6 +265,7 @@ This module requires these other modules and libraries:
   Test::Exception
   Test::Class
   Set::Scalar
+  File::Temp
   
 Test::Class itselfs needs the following additional modules:
   Attribute::Handlers             
@@ -257,7 +280,7 @@ All these modules are needed only for the tests.
 You can work with the module even without them. 
 These modules are only needed for my test routines,
 not by the File::Random itself.
-(However, it's a good idea to install the modules anyway).
+(However, it's a good idea most to install most of the modules anyway).
 
 
 =head1 TODO
@@ -299,7 +322,7 @@ I'll wait a little bit with speeding up :-)
 Using unknown params should bring a warning.
 At the moment they are ignored.
 
-The next thing, I'll implement is the C<random_line> function.
+The next thing, I'll implement is that unknown params brings a warning.
 
 Please feel free to suggest me anything what could be useful.
 

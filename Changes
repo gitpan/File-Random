@@ -1,5 +1,8 @@
 Revision history for Perl extension File::Random.
 
+0.10  Wed Jun 27
+        - random_line method implemented
+
 0.09  Wed Jun 27
         - fixed: Forgot to add Test::Class as required module to the Makefile.PL
 
