@@ -2,7 +2,7 @@
 
 use strict;
 
-use Test::More       qw/no_plan/;
+use Test::More       tests => 18;
 use Test::Exception;
 use File::Random     qw/random_file/;
 
@@ -54,10 +54,7 @@ foreach my $arg (TESTARGUMENTS) {
 	}
 
 	RANDOM_FILES_ARE_DIFFERENT: {
-		my @s1 = sample($arg);
-		my @s2 = sample($arg);
-		my @differences = grep {$s1[$_] ne $s2[$_]} (0 .. $#s1);
-		ok @differences, "Two samples must be different"
+		ok ! eq_array( [sample($arg)], [sample($arg)] )
 		or diag "Called with @{$arg}";
 	}
 

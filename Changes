@@ -1,5 +1,9 @@
 Revision history for Perl extension File::Random.
 
+0.03  Wed Jun 19
+        - -check option implemented
+        - pre-required modules in Makefile.PL written
+
 0.02  Wed Jun 19
         - -dir option implemented: random_file(-dir => $dir)
 

@@ -1,12 +1,21 @@
-File/Random version 0.02
+File/Random version 0.03
 ========================
+
+NAME
+    File::Random - Perl module for random selecting of a file
 
 SYNOPSIS
       use File::Random qw/random_file/;
  
       my $fname  = random_file();
-      
+
       my $fname2 = random_file(-dir => $dir);
+  
+      my $random_gif = random_file(-dir   => $dir,
+                                   -check => qr/\.gif$/);
+                                                           
+      my $no_exe     = random_file(-dir   => $dir,
+                                   -check => sub {! -x});
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
@@ -27,47 +36,18 @@ DESCRIPTION
  
   FUNCTIONS
 
-    random_file(-dir => $dir)
+    random_file(-dir => $dir, -check => $sub_or_re)
         Returns a randomly selected file(name) from the specified directory
         If the directory is empty, undef will be returned.
 
         Is the -dir option missing, a random file from the current directory
         will be used. That means '.' is the default for the -dir option.
 
-  EXPORT
+        With the -check option you can either define a regex every filename
+        has to follow, or a sub routine which gets the filename as argument.
 
-    None by default.
-
-    You can export the function random_file with "use File::Random
-    qw/random_file/;" or with the more simple "use File::Random qw/:all/;".
-
-TODO
-    I think, I'll need some more options. Instead of only one directory, it
-    should be possible to take a random file from some directories. Even a
-    recursive "search" should be included.
-
-    More important will be the -check option, so you can define what regexp
-    or subroutine should be valid, for files randomly choosen.
-
-    So I want to make it possible to write:
-
-      my $fname = random_file( -dir => '...', -recursive => 1, -check     => qr/\.html/ );
-
-    or even:
-
-      my $fname = random_file( -dir => [$dir1, $dir2, $dir3, ...], -r => 1, -check => sub {-M < 7} );
-
-    I also want to add a method "content_of_random_file" and "random_line".
-
-    The next thing, I'll implement is the -check option.
-
-    Just have a look some hours later.
-
-AUTHOR
-    Janek Schleicher, <bigj@kamelfreund.de>
-
-SEE ALSO
-    the Tie::Pick manpage the Tie::Select manpage the Data::Random manpage
+        Note, that -check doesn't accept anything else than a regexp or a
+        subroutine. A string like '/.../' won't work. I still work on that.
 
 INSTALLATION
 
@@ -78,7 +58,7 @@ To install this module type the following:
    make test
    make install
 
-If you don't have Test::More or Test::Exception installed,
+If you don't have Test::More, Test::Exception or Set::Scalar installed,
 make test will produce errors.
 You can work with the module even without them. 
 
@@ -88,8 +68,9 @@ This module requires these other modules and libraries:
 
   Test::More
   Test::Exception
+  Set::Scalar
 
-Both modules are needed only for the tests.
+All these modules are needed only for the tests.
 You can work with the module even without them. 
 These modules are only needed for my test routines,
 not by the File::Random itself.

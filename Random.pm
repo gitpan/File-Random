@@ -17,23 +17,52 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 sub random_file {
-	my %args = (-dir => '.', @_);
-	die "Argument to -dir is undefined" unless defined $args{-dir};
-	$args{-dir} =~ s:/$::;
-	opendir DIR, $args{-dir} or die "Can't open directory '$args{-dir}': .";
-	my @files = grep {-f "$args{-dir}/$_"} (readdir DIR);
+	my ($dir, $check) = _params_random_file(@_);
+	
+	opendir DIR, $dir or die "Can't open directory '$dir'";
+	my @files = grep {-f "$dir/$_" and _valid_file($check, $_)} (readdir DIR);
 	closedir DIR;
 	
 	return undef unless @files;
 	return $files[rand @files];
 }
 
+sub _valid_file {
+	my ($check, $name) = @_; 
+	for (ref($check)) {
+		    /Regexp/ && return $name =~ /$check/
+		or  /CODE/   && ($_ = $name, return $check->($name));
+	}
+}
+
+sub _params_random_file {
+	my %args  = @_;
+	
+	for ('-dir', '-check') {
+		exists $args{$_} and ! $args{$_} and 
+		die "Parameter $_ is declared with a false value";
+	}
+	
+	my $dir   = $args{-dir}   || '.';    
+	my $check = $args{-check} || sub {"always O.K."};
+
+	$dir =~ s:[/\\]+$::;                 # /home/xyz != /home/xyz/
+	
+	unless ((scalar ref $check) =~ /^(Regexp|CODE)$/) {
+		die "-check Parameter has to be either a Regexp or a sub routine,".
+		    "not a '" . ref($check) . "'";
+	}
+		
+	return ($dir, $check);
+}
+
 1;
 __END__
+
 =head1 NAME
 
 File::Random - Perl module for random selecting of a file
@@ -45,6 +74,12 @@ File::Random - Perl module for random selecting of a file
   my $fname  = random_file();
 
   my $fname2 = random_file(-dir => $dir);
+  
+  my $random_gif = random_file(-dir   => $dir,
+                               -check => qr/\.gif$/);
+							   
+  my $no_exe     = random_file(-dir   => $dir,
+                               -check => sub {! -x});
 
 =head1 DESCRIPTION
 
@@ -68,7 +103,7 @@ or
 
 =over
 
-=item random_file(-dir => $dir)
+=item random_file(-dir => $dir, -check => $sub_or_re)
 
 Returns a randomly selected file(name) from the specified directory
 If the directory is empty, undef will be returned.
@@ -76,6 +111,15 @@ If the directory is empty, undef will be returned.
 Is the -dir option missing,
 a random file from the current directory will be used.
 That means '.' is the default for the -dir option.
+
+With the -check option you can either define
+a regex every filename has to follow,
+or a sub routine which gets the filename as argument.
+
+Note, that -check doesn't accept anything else
+than a regexp or a subroutine.
+A string like '/.../' won't work.
+I still work on that.
 
 =back
 
@@ -94,9 +138,9 @@ Instead of only one directory,
 it should be possible to take a random file from some directories.
 Even a recursive "search" should be included.
 
-More important will be the -check option,
-so you can define what regexp or subroutine should be valid,
-for files randomly choosen.
+The -check option doesn't except a string looking like regexp.
+In future versions there should be the possibility of passing a string
+like '/..../' instead of the regexp qr/.../';
 
 So I want to make it possible to write:
   
@@ -108,16 +152,16 @@ or even:
 
 I also want to add a method C<content_of_random_file> and C<random_line>.
 
-The next thing, I'll implement is the -check option.
+The next thing, I'll implement is the -recursive option.
 
 Just have a look some hours later.
 
 =head1 COPYRIGHT
 
-File::Random is free software.
+This Program is free software.
 You can change or redistribute it under the same condition as Perl itself.
 
-(c) 2002, Janek Schleicher
+Copyright (c) 2002, Janek Schleicher
 
 =head1 AUTHOR
 
