@@ -13,7 +13,7 @@ sub _guess_filename(@);
 # Analyze the content and return the file name because of the analysis
 sub random_file {
 	my ($self, %args) = @_;
-	my @content = File::Random::content_of_random_file(
+	my @content = $self->content_of_random_file(
 		%args,
 		(exists($args{-check}) and (ref($args{-check}) !~ /CODE|Regexp/))
 			? ()    # -check option without a sensful value, should surely fail

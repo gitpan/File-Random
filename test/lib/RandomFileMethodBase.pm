@@ -40,11 +40,16 @@ sub sample {
 	return @sample;
 }
 
-# Method for overwriting - 
+# Methods for overwriting - 
 # from practical reasons I didn't want to use the underscore _random_file
 sub random_file {
 	my ($self, @args) = @_;
 	return File::Random::random_file(@args);
+}
+
+sub content_of_random_file {
+    my ($self, @args) = @_;
+    return File::Random::content_of_random_file(@args);
 }
 
 sub call_random_file {
@@ -65,4 +70,3 @@ sub call_random_file {
 
 
 1;
-

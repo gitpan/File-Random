@@ -21,9 +21,10 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 
 sub _standard_dir($);
+sub _dir(%);
 
 sub random_file {
 	my @params = my ($dir, $check, $recursive) = _params_random_file(@_);
@@ -33,9 +34,9 @@ sub random_file {
 }
 
 sub content_of_random_file {
-	my %arg = @_;
-	my $rf = random_file(%arg) or return undef;
-	my $dir = _standard_dir $arg{-dir};
+	my %args = @_;
+	my $rf = random_file(%args) or return undef;
+	my $dir = _standard_dir _dir %args;
 	
 	open RANDOM_FILE, "<", "$dir/$rf" 
 		or die "Can't open the randomly selected file '$dir/$rf'";
@@ -97,21 +98,28 @@ sub _valid_file {
 	}
 }
 
+sub _dir (%) {
+    my %args = @_;
+    return $args{-d} || $args{-dir} || $args{-directory};
+}
+
 sub _params_random_file {
 	my %args  = @_;
 	
-	for ('-dir', '-check') {
+	for (qw/-d -dir -directory -c -check/) {
 		exists $args{$_} and ! $args{$_} and 
 		die "Parameter $_ is declared with a false value";
 	}
     
     foreach (keys %args) {
-        /^\-(dir|check|recursive)/ or warn "Unknown option '$_'";
+        /^\-(d|dir|directory|
+             c|check|
+             r|rec|recursive)$/x or warn "Unknown option '$_'";
     }
-	
-	my $dir   = _standard_dir $args{-dir};    
-	my $check = $args{-check} || sub {"always O.K."};
-	my $recursive = $args{-recursive};   # defaults to undef, already default
+    
+	my $dir   = _standard_dir _dir %args;    
+	my $check = $args{-c} || $args{-check} || sub {"always O.K."};
+	my $recursive = $args{-r} || $args{-rec} || $args{-recursive};
 
 	unless (!defined($check) or (scalar ref($check) =~ /^(Regexp|CODE)$/)) {
 		die "-check Parameter has to be either a Regexp or a sub routine,".
@@ -189,7 +197,7 @@ If the directory is empty, undef will be returned. There 3 options:
 
 =over
 
-=item -dir
+=item -dir (-d or -directory)
 
 Specifies the directory where file has to come from.
 
@@ -197,7 +205,7 @@ Is the -dir option missing,
 a random file from the current directory will be used.
 That means '.' is the default for the -dir option.
 
-=item -check
+=item -check (-c)
 
 With the -check option you can either define
 a regex every filename has to follow,
@@ -212,7 +220,7 @@ I still work on that.
 
 The default is no checking (undef).
 
-=item -recursive
+=item -recursive (-r or -rec)
 
 Enables, that subdirectories are scanned for files, too.
 Every file, independent from its position in the file tree,
@@ -296,25 +304,9 @@ not by the File::Random itself.
 
 =head1 TODO
 
-I think, I'll need to expand the options.
-Instead of only one directory,
-it should be possible to take a random file from some directories.
-
 The -check option doesn't except a string looking like a regexp.
 In future versions there should be the possibility of passing a string
 like '/..../' instead of the regexp qr/.../';
-
-To create some aliases for the params is a good idea, too.
-I thought to make -d == -dir, -r == -recursive and -c == -check.
-(Only a lazy programmer is a good programmer).
-
-So I want to make it possible to write:
-  
-  my $fname = random_file( -dir => '...', -recursive => 1, -check     => '/\.html/' );
-
-or even:
-
-  my $fname = random_file( -d => [$dir1, $dir2, $dir3, ...], -r => 1, -c => sub {-M < 7} );
 
 A C<-firstline> or C<-lines => [1 .. 10]> option for the
 C<content_of_random_file> could be useful. 
@@ -329,11 +321,6 @@ but wasted sometimes a little bit speed.
 (E.g. missing -check is translated to something like -check => sub{1})
 As Functionality and Readability is more important than speed,
 I'll wait a little bit with speeding up :-)
-
-Perhaps it's good to say '-DIR', '-dir' and the simple 'dir' should
-be equivalent options. I'll think about, when I implement aliases.
-
-The next thing, I'll implement is that unknown params brings a warning.
 
 Please feel free to suggest me anything what could be useful.
 

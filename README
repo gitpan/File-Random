@@ -1,5 +1,5 @@
-File::Random - Version 0.10
-===========================
+File::Random Version 0.12
+=========================
 NAME
     File::Random - Perl module for random selecting of a file
 
@@ -41,9 +41,9 @@ DESCRIPTION
  
     It also becomes very boring and very dangerous to write randomly
     selection for subdirectory searching with special check-routines.
-    
-    The simple standard job of selecting a random line from a file
-    is implemented, too.
+
+    The simple standard job of selecting a random line from a file is
+    implemented, too.
 
   FUNCTION random_file
     Returns a randomly selected file(name) from the specified directory If
@@ -55,13 +55,13 @@ DESCRIPTION
              -recursive   => 1        # or 0
       );
 
-    -dir
+    -dir (-d or -directory)
         Specifies the directory where file has to come from.
 
         Is the -dir option missing, a random file from the current directory
         will be used. That means '.' is the default for the -dir option.
 
-    -check
+    -check (-c)
         With the -check option you can either define a regex every filename
         has to follow, or a sub routine which gets the filename as argument.
         The filename includes the relative path (from the -dir directory or
@@ -72,7 +72,7 @@ DESCRIPTION
 
         The default is no checking (undef).
 
-    -recursive
+    -recursive (-r or -rec)
         Enables, that subdirectories are scanned for files, too. Every file,
         independent from its position in the file tree, has the same chance
         to be choosen. Now the relative path from the given subdirectory or
@@ -85,6 +85,10 @@ DESCRIPTION
         Note, that I programmed the recursive routine very defendly (using
         File::Find). So switching -recursive on, slowers the program a bit
         :-)
+
+    unknown options
+        Gives a warning. Unknown options are ignored. Note, that upper/lower
+        case makes a difference. (Maybe, once a day I'll change it)
 
   FUNCTION content_of_random_file
         Returns the content of a randomly selected random file. In list
@@ -141,3 +145,14 @@ AUTHOR
 
 SEE ALSO
     Tie::Pick Data::Random
+
+INSTALLATION
+
+The classic
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+    
+will do this job.

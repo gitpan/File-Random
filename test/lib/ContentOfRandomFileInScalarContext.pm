@@ -10,7 +10,7 @@ use File::Random;
 # Could be danger to overwrite this changed version !!
 sub random_file {
 	my ($self, @args) = @_;
-	my $content = scalar File::Random::content_of_random_file(@args);
+	my $content = scalar $self->content_of_random_file(@args);
 	$content =~ s/\s*$//s;    # ignore whitespaces at the end of the files
 	return $content;
 }
