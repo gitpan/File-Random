@@ -1,20 +1,19 @@
-File/Random version 0.01
+File/Random version 0.02
 ========================
-
-NAME
-
-    File::Random - Perl module for random selecting of a file
 
 SYNOPSIS
       use File::Random qw/random_file/;
  
-      my $fname = random_file();
+      my $fname  = random_file();
+      
+      my $fname2 = random_file(-dir => $dir);
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
     you can find at CGI scripts).
 
-    It's done, because it's boring, always to write something like
+    It's done, because it's boring (and errorprone), always to write
+    something like
 
       my @files = (<*.*>);
       my $randf = $files[rand @files];
@@ -28,17 +27,29 @@ DESCRIPTION
  
   FUNCTIONS
 
-    random_file
-        Returns a randomly selected file(name) from the current directory.
+    random_file(-dir => $dir)
+        Returns a randomly selected file(name) from the specified directory
         If the directory is empty, undef will be returned.
+
+        Is the -dir option missing, a random file from the current directory
+        will be used. That means '.' is the default for the -dir option.
 
   EXPORT
 
     None by default.
 
+    You can export the function random_file with "use File::Random
+    qw/random_file/;" or with the more simple "use File::Random qw/:all/;".
+
 TODO
-    In this version, there's only a random file from the actual directory
-    returned. I also want to make it possible to write:
+    I think, I'll need some more options. Instead of only one directory, it
+    should be possible to take a random file from some directories. Even a
+    recursive "search" should be included.
+
+    More important will be the -check option, so you can define what regexp
+    or subroutine should be valid, for files randomly choosen.
+
+    So I want to make it possible to write:
 
       my $fname = random_file( -dir => '...', -recursive => 1, -check     => qr/\.html/ );
 
@@ -48,11 +59,15 @@ TODO
 
     I also want to add a method "content_of_random_file" and "random_line".
 
-    The next thing I'll do is to give the user the possibility of specifying
-    the directory.
+    The next thing, I'll implement is the -check option.
 
     Just have a look some hours later.
-	
+
+AUTHOR
+    Janek Schleicher, <bigj@kamelfreund.de>
+
+SEE ALSO
+    the Tie::Pick manpage the Tie::Select manpage the Data::Random manpage
 
 INSTALLATION
 
@@ -63,14 +78,26 @@ To install this module type the following:
    make test
    make install
 
+If you don't have Test::More or Test::Exception installed,
+make test will produce errors.
+You can work with the module even without them. 
+
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
   Test::More
+  Test::Exception
+
+Both modules are needed only for the tests.
+You can work with the module even without them. 
+These modules are only needed for my test routines,
+not by the File::Random itself.
+(However, it's a good idea to install the modules anyway).
 
 COPYRIGHT AND LICENCE
 
-Put the correct copyright and licence information here.
+This module is free software.
+You can change and redistribute it under the same condition as Perl self.
 
 Copyright (C) 2002 Janek Schleicher, <bigj@kamelfreund.de>

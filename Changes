@@ -1,5 +1,8 @@
 Revision history for Perl extension File::Random.
 
+0.02  Wed Jun 19
+        - -dir option implemented: random_file(-dir => $dir)
+
 0.01  Tue Jun 18 10:57:17 2002
 	- original version; created by h2xs 1.21 with options
 		-XA File::Random
