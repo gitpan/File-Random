@@ -31,8 +31,8 @@ diag "\n";
 
 	
 diag "Test method content_of_random_file";
-use ContentOfRandomFileMethodAllTests;
-ContentOfRandomFileMethodAllTests->new()->runtests();
+use ContentOfRandomFileTestOptions;
+ContentOfRandomFileTestOptions->new()->runtests();
 
 use ContentOfRandomFileInScalarContext;
 ContentOfRandomFileInScalarContext->new()->runtests();

@@ -1,5 +1,9 @@
 Revision history for Perl extension File::Random.
 
+0.08  Wed Jun 26
+        - Required Modules of Test::Class added to the Makefille.PL
+        - made some internal refacturings
+
 0.07  Tue Jun 25
         - content_of_random_file returns in scalar context the content of the file in one (multiline) string
         - changed argument passed to the checkroutine:

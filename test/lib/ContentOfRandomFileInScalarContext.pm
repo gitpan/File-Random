@@ -6,6 +6,8 @@ use Test::More;
 
 use File::Random;
 
+# Change the random_file call to simply return the Contents
+# Could be danger to overwrite this changed version !!
 sub random_file {
 	my ($self, @args) = @_;
 	my $content = scalar File::Random::content_of_random_file(@args);

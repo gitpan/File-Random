@@ -17,7 +17,7 @@ sub expected_files_found_ok {
 	my $found  = Set::Scalar->new( grep defined, $self->sample(@$args) );
 	
 	_remove_cvs_files( $found );
-	ok $exp->is_equal($found), $testname     
+	is $found, $exp, $testname     
 	or diag "found: $found", 
 	        "expected $exp",
 	        "called with " . join (", " => @$args);
@@ -40,6 +40,8 @@ sub sample {
 	return @sample;
 }
 
+# Method for overwriting - 
+# from practical reasons I didn't want to use the underscore _random_file
 sub random_file {
 	my ($self, @args) = @_;
 	return File::Random::random_file(@args);

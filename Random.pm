@@ -20,8 +20,9 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
+sub _standard_dir($);
 
 sub random_file {
 	my @params = my ($dir, $check, $recursive) = _params_random_file(@_);
@@ -33,10 +34,10 @@ sub random_file {
 sub content_of_random_file {
 	my %arg = @_;
 	my $rf = random_file(%arg) or return undef;
-	(my $dir = $arg{-dir} || '.') =~ s:[/\\]*$::;
+	my $dir = _standard_dir $arg{-dir};
 	
 	open RANDOM_FILE, "<", "$dir/$rf" 
-		or die "Can't open the randomly selected file $rf";
+		or die "Can't open the randomly selected file '$dir/$rf'";
 	my @content = (<RANDOM_FILE>);
 	close RANDOM_FILE;
 	return wantarray ? @content : join "", @content;
@@ -92,18 +93,22 @@ sub _params_random_file {
 		die "Parameter $_ is declared with a false value";
 	}
 	
-	my $dir   = $args{-dir}   || '.';    
+	my $dir   = _standard_dir $args{-dir};    
 	my $check = $args{-check} || sub {"always O.K."};
 	my $recursive = $args{-recursive};   # defaults to undef, already default
 
-	$dir =~ s:[/\\]+$::;                 # /home/xyz != /home/xyz/
-	
 	unless (!defined($check) or (scalar ref($check) =~ /^(Regexp|CODE)$/)) {
 		die "-check Parameter has to be either a Regexp or a sub routine,".
 		    "not a '" . ref($check) . "'";
 	}
 		
 	return ($dir, $check, $recursive);
+}
+
+sub _standard_dir($) {    
+	my $dir = shift() || '.';
+	$dir =~ s:[/\\]+$::;
+	return $dir;
 }
 
 1;
@@ -229,6 +234,31 @@ I didn't want to pollute namespaces as I could imagine,
 users write methods random_file to create a file with random content.
 If you think I'm paranoid, please tell me,
 then I'll take it into the export.
+
+=head1 DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  Test::More
+  Test::Exception
+  Test::Class
+  Set::Scalar
+  
+Test::Class itselfs needs the following additional modules:
+  Attribute::Handlers             
+  Class::ISA                      
+  IO::File                        
+  Storable
+  Test::Builder
+  Test::Builder::Tester
+  Test::Differences    
+
+All these modules are needed only for the tests.
+You can work with the module even without them. 
+These modules are only needed for my test routines,
+not by the File::Random itself.
+(However, it's a good idea to install the modules anyway).
+
 
 =head1 TODO
 

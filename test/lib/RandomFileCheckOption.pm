@@ -2,6 +2,9 @@ package RandomFileCheckOption;
 use base qw/RandomFileMethodBase/;
 use TestConstants;
 
+use strict;
+use warnings;
+
 use Test::More;
 use Test::Exception;
 use Data::Dumper;
@@ -15,9 +18,10 @@ sub check_standard_case : Test(4) {
 	my %files = FILES_FOR_RE;
 	foreach my $re (keys %files) {
 		foreach my $check (qr/$re/, sub {/$re/}) {
-			$self->expected_files_found_ok($files{$re},
-			                               [-dir => SIMPLE_DIR, -check => $check],
-							            	"Used RE $re as " . ref $check);
+			my @args = (-dir => SIMPLE_DIR, -check => $check);
+			$self->expected_files_found_ok($files{$re}, 
+			                               [@args],
+										   "Used RE $re as " . ref $check);
 		}
 	}
 }
