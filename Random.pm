@@ -20,7 +20,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 
 sub random_file {
@@ -28,6 +28,18 @@ sub random_file {
 	
 	return $recursive ? _random_file_recursive    (@params)
 	                  : _random_file_non_recursive(@params);
+}
+
+sub content_of_random_file {
+	my %arg = @_;
+	my $rf = random_file(%arg) or return undef;
+	(my $dir = $arg{-dir} || '.') =~ s:[/\\]*$::;
+	
+	open RANDOM_FILE, "<", "$dir/$rf" 
+		or die "Can't open the randomly selected file $rf";
+	my @content = (<RANDOM_FILE>);
+	close RANDOM_FILE;
+	return @content;
 }
 
 sub _random_file_non_recursive {
@@ -113,6 +125,8 @@ File::Random - Perl module for random selecting of a file
 							   
   my $no_exe     = random_file(-dir   => $dir,
                                -check => sub {! -x});
+							   
+  my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
 
 =head1 DESCRIPTION
 
@@ -184,6 +198,14 @@ Note, that I programmed the recursive routine very defendly
 (using File::Find).
 So switching -recursive on, slowers the program a bit :-)
 
+=head2 FUNCTION content_of_random_file
+
+Returns the content as an array of lines of a randomly selected random file.
+The lines aren't chomped.
+
+This function has the same parameter and a similar behaviour to the
+random_file method.
+
 =back
 
 =head2 EXPORT
@@ -191,8 +213,14 @@ So switching -recursive on, slowers the program a bit :-)
 None by default.
 
 You can export the function random_file with
-C<use File::Random qw/random_file/;> or with the more simple
+C<use File::Random qw/random_file/;>,
+C<use File::Random qw/content_of_random_file/> or with the more simple
 C<use File::Random qw/:all/;>.
+
+I didn't want to pollute namespaces as I could imagine,
+users write methods random_file to create a file with random content.
+If you think I'm paranoid, please tell me,
+then I'll take it into the export.
 
 =head1 TODO
 
@@ -216,7 +244,11 @@ or even:
 
   my $fname = random_file( -d => [$dir1, $dir2, $dir3, ...], -r => 1, -c => sub {-M < 7} );
 
-I also want to add a method C<content_of_random_file> and C<random_line>.
+The C<content_of_random_file> method always returns an array,
+even in scalar context.
+I think it's useful that it returns the content as one string in scalar
+context. Also a -firstline option could be useful. 
+Later -randomline option should be implemented, too.
 
 Also speed could be improved,
 as I tried to write the code very readable,
@@ -228,7 +260,8 @@ I'll wait a little bit with speeding up :-)
 Using unknown params should bring a warning.
 At the moment they are ignored.
 
-The next thing, I'll implement is the content_of_random_file method.
+The next thing, I'll implement is the scalar context of 
+C<content_of_random_file>.
 
 Just have a look some hours later.
 
@@ -262,7 +295,6 @@ Janek Schleicher, E<lt>bigj@kamelfreund.deE<gt>
 =head1 SEE ALSO
 
 L<Tie::Pick> 
-L<Tie::Select>
 L<Data::Random>
 
 =cut

@@ -1,7 +1,7 @@
-File/Random version 0.05
+File/Random version 0.06
 ========================
 NAME
-    File::Random - Perl module for random selecting of a file
+    File::Random - Perl module for randomly selection of a file
 
 SYNOPSIS
       use File::Random qw/random_file/;
@@ -16,6 +16,8 @@ SYNOPSIS
                                                            
       my $no_exe     = random_file(-dir   => $dir,
                                    -check => sub {! -x});
+                                                           
+      my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
@@ -77,12 +79,79 @@ DESCRIPTION
         File::Find). So switching -recursive on, slowers the program a bit
         :-)
 
+  FUNCTION content_of_random_file
+
+        Returns the content as an array of lines of a randomly selected
+        random file. The lines aren't chomped.
+
+        This function has the same parameter and a similar behaviour to the
+        random_file method.
+
   EXPORT
 
     None by default.
 
     You can export the function random_file with "use File::Random
-    qw/random_file/;" or with the more simple "use File::Random qw/:all/;".
+    qw/random_file/;", "use File::Random qw/content_of_random_file/" or with
+    the more simple "use File::Random qw/:all/;".
+
+    I didn't want to pollute namespaces as I could imagine, users write
+    methods random_file to create a file with random content. If you think
+    I'm paranoid, please tell me, then I'll take it into the export.
+
+TODO
+    I think, I'll need to expand the options. Instead of only one directory,
+    it should be possible to take a random file from some directories.
+
+    The -check option doesn't except a string looking like regexp. In future
+    versions there should be the possibility of passing a string like
+    '/..../' instead of the regexp qr/.../';
+
+    To create some aliases for the params is a good idea, too. I thought to
+    make -d == -dir, -r == -recursive and -c == -check. (Only a lazy
+    programmer is a good programmer).
+
+    So I want to make it possible to write:
+
+      my $fname = random_file( -dir => '...', -recursive => 1, -check     => '/\.html/' );
+
+    or even:
+
+      my $fname = random_file( -d => [$dir1, $dir2, $dir3, ...], -r => 1, -c => sub {-M < 7} );
+
+    The "content_of_random_file" method always returns an array, even in
+    scalar context. I think it's useful that it returns the content as one
+    string in scalar context. Also a -firstline option could be useful.
+    Later -randomline option should be implemented, too.
+
+    Also speed could be improved, as I tried to write the code very
+    readable, but wasted sometimes a little bit speed. (E.g. missing -check
+    is translated to something like -check => sub{1}) As Functionality and
+    Readability is more important than speed, I'll wait a little bit with
+    speeding up :-)
+
+    Using unknown params should bring a warning. At the moment they are
+    ignored.
+
+    The next thing, I'll implement is the scalar context of
+    "content_of_random_file".
+
+    Just have a look some hours later.
+
+BUGS
+    Oh, I hope none. I still have more test lines than function code.
+    However, it's still BETA code.
+
+    Well, but because I want some random data, it's a little bit hard to
+    test. So a test could be wrong, allthough everything is O.K.. To avoid
+    it, I let many tests run, so that the chances for misproofing should be
+    < 0.0000000001% or so. Even it has the disadvantage that the tests need
+    really long :-(
+
+    I'm not definitly sure whether my test routines runs on OS, with path
+    seperators different of '/', like in Win with '\\'. Perhaps anybody can
+    try it and tell me the result. [But remember Win* is definitly the
+    greater bug.]
 
 DEPENDENCIES
 
@@ -90,6 +159,7 @@ This module requires these other modules and libraries:
 
   Test::More
   Test::Exception
+  Test::Class
   Set::Scalar
 
 All these modules are needed only for the tests.
@@ -99,7 +169,8 @@ not by the File::Random itself.
 (However, it's a good idea to install the modules anyway).
 
 SEE ALSO
-    the Tie::Pick manpage the Tie::Select manpage the Data::Random manpage
+    the Tie::Pick manpage 
+	the Data::Random manpage
 
 COPYRIGHT AND LICENCE
 

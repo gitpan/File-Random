@@ -13,7 +13,7 @@
 #	ABSTRACT_FROM => q[Random.pm]
 #	AUTHOR => q[Janek Schleicher <bigj@kamelfreund.de>]
 #	NAME => q[File::Random]
-#	PREREQ_PM => { Test::Exception=>q[0], Set::Scalar=>q[0], Test::More=>q[0] }
+#	PREREQ_PM => { Test::Exception=>q[0], Set::Scalar=>q[0], Test::Class=>q[0.03], Test::More=>q[0] }
 #	VERSION_FROM => q[Random.pm]
 
 # --- MakeMaker post_initialize section:
@@ -49,9 +49,9 @@ AR_STATIC_ARGS = cr
 NAME = File::Random
 DISTNAME = File-Random
 NAME_SYM = File_Random
-VERSION = 0.05
-VERSION_SYM = 0_05
-XS_VERSION = 0.05
+VERSION = 0.06
+VERSION_SYM = 0_06
+XS_VERSION = 0.06
 INST_BIN = blib/bin
 INST_EXE = blib/script
 INST_LIB = blib/lib
@@ -634,7 +634,7 @@ $(MAKE_APERL_FILE) : $(FIRST_MAKEFILE)
 TEST_VERBOSE=0
 TEST_TYPE=test_$(LINKTYPE)
 TEST_FILE = test.pl
-TEST_FILES = t/*.t
+TEST_FILES = 
 TESTDB_SW = -d
 
 testdb :: testdb_$(LINKTYPE)
@@ -642,7 +642,6 @@ testdb :: testdb_$(LINKTYPE)
 test :: $(TEST_TYPE)
 
 test_dynamic :: pure_all
-	PERL_DL_NONLAZY=1 $(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) -I$(PERL_ARCHLIB) -I$(PERL_LIB) -e 'use Test::Harness qw(&runtests $$verbose); $$verbose=$(TEST_VERBOSE); runtests @ARGV;' $(TEST_FILES)
 	PERL_DL_NONLAZY=1 $(FULLPERL) -I$(INST_ARCHLIB) -I$(INST_LIB) -I$(PERL_ARCHLIB) -I$(PERL_LIB) $(TEST_FILE)
 
 testdb_dynamic :: pure_all
@@ -657,7 +656,7 @@ testdb_static :: testdb_dynamic
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd:
-	@$(PERL) -e "print qq{<SOFTPKG NAME=\"File-Random\" VERSION=\"0,05,0,0\">\n}. qq{\t<TITLE>File-Random</TITLE>\n}. qq{\t<ABSTRACT>Perl module for random selecting of a file</ABSTRACT>\n}. qq{\t<AUTHOR>Janek Schleicher &lt;bigj\@kamelfreund.de&gt;</AUTHOR>\n}. qq{\t<IMPLEMENTATION>\n}. qq{\t\t<DEPENDENCY NAME=\"Set-Scalar\" VERSION=\"0,0,0,0\" />\n}. qq{\t\t<DEPENDENCY NAME=\"Test-Exception\" VERSION=\"0,0,0,0\" />\n}. qq{\t\t<DEPENDENCY NAME=\"Test-More\" VERSION=\"0,0,0,0\" />\n}. qq{\t\t<OS NAME=\"$(OSNAME)\" />\n}. qq{\t\t<ARCHITECTURE NAME=\"i686-linux-thread-multi\" />\n}. qq{\t\t<CODEBASE HREF=\"\" />\n}. qq{\t</IMPLEMENTATION>\n}. qq{</SOFTPKG>\n}" > File-Random.ppd
+	@$(PERL) -e "print qq{<SOFTPKG NAME=\"File-Random\" VERSION=\"0,06,0,0\">\n}. qq{\t<TITLE>File-Random</TITLE>\n}. qq{\t<ABSTRACT>Perl module for random selecting of a file</ABSTRACT>\n}. qq{\t<AUTHOR>Janek Schleicher &lt;bigj\@kamelfreund.de&gt;</AUTHOR>\n}. qq{\t<IMPLEMENTATION>\n}. qq{\t\t<DEPENDENCY NAME=\"Set-Scalar\" VERSION=\"0,0,0,0\" />\n}. qq{\t\t<DEPENDENCY NAME=\"Test-Class\" VERSION=\"0,03,0,0\" />\n}. qq{\t\t<DEPENDENCY NAME=\"Test-Exception\" VERSION=\"0,0,0,0\" />\n}. qq{\t\t<DEPENDENCY NAME=\"Test-More\" VERSION=\"0,0,0,0\" />\n}. qq{\t\t<OS NAME=\"$(OSNAME)\" />\n}. qq{\t\t<ARCHITECTURE NAME=\"i686-linux-thread-multi\" />\n}. qq{\t\t<CODEBASE HREF=\"\" />\n}. qq{\t</IMPLEMENTATION>\n}. qq{</SOFTPKG>\n}" > File-Random.ppd
 
 # --- MakeMaker pm_to_blib section:
 

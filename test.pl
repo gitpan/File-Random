@@ -5,8 +5,8 @@
 
 # change 'tests => 1' to 'tests => last_test_to_print';
 
-use Test;
-BEGIN { plan tests => 1 };
+use Test::More;
+BEGIN { plan tests => 1 + 2 * 33 };
 use File::Random;
 ok(1); # If we made it this far, we're ok.
 
@@ -14,4 +14,24 @@ ok(1); # If we made it this far, we're ok.
 
 # Insert your test code below, the Test module is use()ed here so read
 # its man page ( perldoc Test ) for help writing this test script.
+use lib qw:test/lib:;
 
+use strict;
+use warnings;
+
+use Data::Dumper;
+
+$Data::Dumper::Indent  = 0;
+$Data::Dumper::Varname = 'X';
+
+diag "Test method random_file";
+use RandomFileMethodAllTests;
+RandomFileMethodAllTests->new()->runtests();
+diag "\n";
+
+diag "Test method content_of_random_file";
+use ContentOfRandomFileMethodAllTests;
+ContentOfRandomFileMethodAllTests->new()->runtests();
+diag "\n";
+
+1;

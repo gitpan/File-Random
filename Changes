@@ -1,5 +1,9 @@
 Revision history for Perl extension File::Random.
 
+0.06  Tue Jun 25
+        - Refactoring of the test design: Use now Test::Class module
+        - Implemented content_of_random_file method
+
 0.05  Thu Jun 20
         - changed return value of random_file when using recursive option
           [now the relative path is a part of the return, not only a filename]
