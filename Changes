@@ -1,5 +1,9 @@
 Revision history for Perl extension File::Random.
 
+0.17  Tue Aug 20
+        - changed random_line method that it detects also how many lines are wanted
+          * my ($line1, $line2, $line3) = random_line $fname
+
 0.16  Mon Aug 19
         - added option to random_line method to return more than one random_line
           * random_line($fname [, $nr_of_lines ])

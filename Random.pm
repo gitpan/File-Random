@@ -6,6 +6,7 @@ use warnings;
 
 use File::Find;
 use Carp;
+use Want qw/howmany/;
 
 require Exporter;
 
@@ -30,7 +31,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{':all'} }, 'corf' );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.16';
+our $VERSION = '0.17';
 
 sub _standard_dir($);
 sub _dir(%);
@@ -59,6 +60,9 @@ sub content_of_random_file {
 sub random_line {
     my ($fname, $nr_of_lines) = @_;
     defined $fname or die "Need a defined filename to read a random line";
+    if (!defined($nr_of_lines) and wantarray) {
+        $nr_of_lines = howmany() || 1;
+    }
     unless (!defined($nr_of_lines) or $nr_of_lines =~ /^\d+$/) {
         die "Number of random_lines should be a number, not '$nr_of_lines'";
     }
@@ -193,6 +197,8 @@ File::Random - Perl module for random selecting of a file
   
   my $word_of_the_day = random_line('/usr/share/dict/words');
   my @three_words     = random_line('/usr/share/dict/words',3);
+  # or
+  my ($title,$speech,$conclusion) = random_line('/usr/share/dict/words');
 
 =head1 DESCRIPTION
 
@@ -329,6 +335,20 @@ Calling C<random_line> in scalar context with C<$nr_of_lines> greater than 1,
 gives a warning, as it doesn't make a lot of sense.
 I also gives you a warning of C<$nr_of_lines> is zero.
 
+You also can write something like
+
+  my ($line1, $line2, $line3) = random_line($fname);
+  
+and random_line will return a list of 3 randomly choosen lines.
+Allthough C<File::Random> tries its best to find out how many lines
+you wanted, it's not an oracle, so
+
+  my @line = random_line($fname);
+  
+will be interpreted as
+
+  my @line = random_line($fname,1);
+
 =head2 EXPORT
 
 None by default.
@@ -346,6 +366,10 @@ then I'll take it into the export.
 =head1 DEPENDENCIES
 
 This module requires these other modules and libraries:
+
+  Want
+  
+For the tests are also needed many more modules:
 
   Test::More
   Test::Exception
@@ -379,14 +403,6 @@ C<content_of_random_file> could be useful.
 Also speed could be improved,
 as I tried to write the code very readable,
 but wasted sometimes a little bit speed.
-
-random_line should return in list context,
-the random_lines of the wanted lines,
-so something like
-
-  my ($line1, $line2, $line3) = random_line($fname)
-  
-should work without the specification on the right side.
 
 Please feel free to suggest me anything what could be useful.
 

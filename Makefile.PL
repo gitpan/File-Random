@@ -5,6 +5,8 @@ WriteMakefile(
     'NAME'		    => 'File::Random',
     'VERSION_FROM'	=> 'Random.pm', # finds $VERSION
     'PREREQ_PM'		=> {
+        Want                            => 0,
+
         # Test-Modules
         Test::Class                     => 0.03,
     

@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test::More;
-BEGIN { plan tests => 278};
+BEGIN { plan tests => 284};
 use File::Random;
 ok 1, "Stupid Load test"; # If we made it this far, we're ok.
 
@@ -24,6 +24,11 @@ use Data::Dumper;
 $Data::Dumper::Indent  = 0;
 $Data::Dumper::Varname = 'X';
 
+diag "Test method random_line";
+use RandomLine;
+RandomLine->new()->runtests();
+diag "\n";
+
 diag "Test method random_file";
 use RandomFileMethodAllTests;
 RandomFileMethodAllTests->new()->runtests();
@@ -36,11 +41,6 @@ ContentOfRandomFileTestOptions->new()->runtests();
 
 use ContentOfRandomFileInScalarContext;
 ContentOfRandomFileInScalarContext->new()->runtests();
-diag "\n";
-
-diag "Test method random_line";
-use RandomLine;
-RandomLine->new()->runtests();
 diag "\n";
 
 1;

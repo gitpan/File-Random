@@ -1,4 +1,4 @@
-File::Random Version 0.16
+File::Random Version 0.17
 =========================
 NAME
     File::Random - Perl module for random selecting of a file
@@ -35,6 +35,8 @@ SYNOPSIS
   
       my $word_of_the_day = random_line('/usr/share/dict/words');
       my @three_words     = random_line('/usr/share/dict/words',3);
+      # or
+      my ($title,$speech,$conclusion) = random_line('/usr/share/dict/words');
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
@@ -61,6 +63,10 @@ DESCRIPTION
 
 DEPENDENCIES
   This module requires these other modules and libraries:
+
+    Want
+  
+  For the tests are also needed many more modules:
 
     Test::More
     Test::Exception
