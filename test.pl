@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test::More;
-BEGIN { plan tests => 1 + 2 * 33 };
+BEGIN { plan tests => 73};
 use File::Random;
 ok(1); # If we made it this far, we're ok.
 
@@ -29,9 +29,13 @@ use RandomFileMethodAllTests;
 RandomFileMethodAllTests->new()->runtests();
 diag "\n";
 
+	
 diag "Test method content_of_random_file";
 use ContentOfRandomFileMethodAllTests;
 ContentOfRandomFileMethodAllTests->new()->runtests();
+
+use ContentOfRandomFileInScalarContext;
+ContentOfRandomFileInScalarContext->new()->runtests();
 diag "\n";
 
 1;

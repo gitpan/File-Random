@@ -16,7 +16,7 @@ sub expected_files_found_ok {
 	my $exp    = Set::Scalar->new(@$exp_files);
 	my $found  = Set::Scalar->new( grep defined, $self->sample(@$args) );
 	
-	__remove_cvs_files( $found );
+	_remove_cvs_files( $found );
 	ok $exp->is_equal($found), $testname     
 	or diag "found: $found", 
 	        "expected $exp",
@@ -26,10 +26,10 @@ sub expected_files_found_ok {
 # I use a CVS System at home,
 # so there are always some files more than needed
 # that's why I delete them from the found files
-sub __remove_cvs_files($) {
+sub _remove_cvs_files($) {
 	my $f = shift;
 	foreach ($f->members) {
-		$f->delete($_) if defined($_) && ($_ =~ /Repository|CVS|Entries/);
+		$f->delete($_) if defined($_) && ($_ =~ /Repository|CVS|Entries|Root/);
 	}
 }
 
@@ -41,8 +41,8 @@ sub sample {
 }
 
 sub random_file {
-	my $self = shift;
-	return File::Random::random_file(@_);
+	my ($self, @args) = @_;
+	return File::Random::random_file(@args);
 }
 
 sub call_random_file {

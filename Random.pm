@@ -20,7 +20,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 our @EXPORT = qw(
 	
 );
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 sub random_file {
@@ -39,7 +39,7 @@ sub content_of_random_file {
 		or die "Can't open the randomly selected file $rf";
 	my @content = (<RANDOM_FILE>);
 	close RANDOM_FILE;
-	return @content;
+	return wantarray ? @content : join "", @content;
 }
 
 sub _random_file_non_recursive {
@@ -61,12 +61,14 @@ sub _random_file_recursive {
 
 	my $accept_routine = sub {
 		return unless -f; 
-		return unless _valid_file($check,$_);
+		
+		# Calculate filename with relative path
+		my ($f) = $File::Find::name =~ m:^$dir[/\\]*(.*)$:;
+		return unless _valid_file($check,$f);
 		# Algorithm from Cookbook, chapter 8.6
 		# similar to selecting a random line from a file
 		if (rand($i++) < 1) {
-			$File::Find::name =~ m:^$dir[/\\]*(.*)$:;
-			$fname = $1;
+			$fname = $f;
 		}
 	};
 	find($accept_routine, $dir);
@@ -127,6 +129,7 @@ File::Random - Perl module for random selecting of a file
                                -check => sub {! -x});
 							   
   my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
+  my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
 
 =head1 DESCRIPTION
 
@@ -174,6 +177,8 @@ That means '.' is the default for the -dir option.
 With the -check option you can either define
 a regex every filename has to follow,
 or a sub routine which gets the filename as argument.
+The filename includes the relative path 
+(from the -dir directory or the current directory).
 
 Note, that -check doesn't accept anything else
 than a regexp or a subroutine.
@@ -200,11 +205,14 @@ So switching -recursive on, slowers the program a bit :-)
 
 =head2 FUNCTION content_of_random_file
 
-Returns the content as an array of lines of a randomly selected random file.
+Returns the content of a randomly selected random file.
+In list context it returns an array of the lines of the selected file,
+in scalar context it returns a multiline string with whole the file.
 The lines aren't chomped.
 
 This function has the same parameter and a similar behaviour to the
-random_file method.
+random_file method. 
+Note, that -check still gets the filename and not the filecontent.
 
 =back
 
@@ -228,7 +236,7 @@ I think, I'll need to expand the options.
 Instead of only one directory,
 it should be possible to take a random file from some directories.
 
-The -check option doesn't except a string looking like regexp.
+The -check option doesn't except a string looking like a regexp.
 In future versions there should be the possibility of passing a string
 like '/..../' instead of the regexp qr/.../';
 
@@ -244,11 +252,12 @@ or even:
 
   my $fname = random_file( -d => [$dir1, $dir2, $dir3, ...], -r => 1, -c => sub {-M < 7} );
 
-The C<content_of_random_file> method always returns an array,
-even in scalar context.
-I think it's useful that it returns the content as one string in scalar
-context. Also a -firstline option could be useful. 
-Later -randomline option should be implemented, too.
+A C<-firstline> or C<-lines => [1 .. 10]> option for the
+C<content_of_random_file> could be useful. 
+Later something like C<-randomline> option should be implemented, too.
+(Making the same as C<random_line( random_file( ... ) )>)
+C<content_of_random_file> is very long,
+perhaps I'll implement a synonym C<corf>.
 
 Also speed could be improved,
 as I tried to write the code very readable,
@@ -260,10 +269,9 @@ I'll wait a little bit with speeding up :-)
 Using unknown params should bring a warning.
 At the moment they are ignored.
 
-The next thing, I'll implement is the scalar context of 
-C<content_of_random_file>.
+The next thing, I'll implement is the C<random_line> function.
 
-Just have a look some hours later.
+Please feel free to suggest me anything what could be useful.
 
 =head1 BUGS
 

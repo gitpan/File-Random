@@ -9,6 +9,8 @@ our @EXPORT = qw/SAMPLE_SIZE
                  HOME_DIR      SIMPLE_DIR  EMPTY_DIR  REC_DIR
 				 SIMPLE_FILES  SIMPLE_FILES_WITH_NR  SIMPLE_FILES_WITH_DOT
 				 REC_FILES     REC_TOP_FILES  REC_ODD_FILES 
+				 SIMPLE_CONTENTS
+				 REC_CONTENTS
                  no_slash with_slash/;
 
 our @EXPORT_OK = @EXPORT;
@@ -44,9 +46,12 @@ use constant REC_FILES             => REC_TOP_FILES,
 									  map( {"sub2/$_"}        files(10 .. 12) ); 
 use constant REC_ODD_FILES         => grep m/[13579]$/, REC_FILES;
 
-use constant REC_CONTENTS  => map {"Content: file"} (1 .. 12);
+use constant REC_CONTENTS    =>  map {"Content: $_"} REC_FILES;
+use constant SIMPLE_CONTENTS => ( map({"Content: $_"} SIMPLE_FILES_WITH_NR),
+                                  map({"line 0\nline 1\nline 2\n$_\nline 4"}
+								      SIMPLE_FILES_WITH_DOT) );
 	
-use constant SAMPLE_SIZE   => 200;
+use constant SAMPLE_SIZE   => 250;
 
 sub no_slash {
 	my $path = shift;

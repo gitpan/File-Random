@@ -1,7 +1,7 @@
-File/Random version 0.06
+File/Random version 0.07
 ========================
 NAME
-    File::Random - Perl module for randomly selection of a file
+    File::Random - Perl module for random selecting of a file
 
 SYNOPSIS
       use File::Random qw/random_file/;
@@ -18,6 +18,7 @@ SYNOPSIS
                                    -check => sub {! -x});
                                                            
       my @jokes_of_the_day = content_of_random_file(-dir => '/usr/lib/jokes');
+      my $joke_of_the_day  = content_of_random_file(-dir => '/usr/lib/jokes');
 
 DESCRIPTION
     This module simplifies the routine job of selecting a random file. (As
@@ -59,6 +60,8 @@ DESCRIPTION
     -check
         With the -check option you can either define a regex every filename
         has to follow, or a sub routine which gets the filename as argument.
+        The filename includes the relative path (from the -dir directory or
+        the current directory).
 
         Note, that -check doesn't accept anything else than a regexp or a
         subroutine. A string like '/.../' won't work. I still work on that.
@@ -81,11 +84,14 @@ DESCRIPTION
 
   FUNCTION content_of_random_file
 
-        Returns the content as an array of lines of a randomly selected
-        random file. The lines aren't chomped.
+        Returns the content of a randomly selected random file. In list
+        context it returns an array of the lines of the selected file, in
+        scalar context it returns a multiline string with whole the file.
+        The lines aren't chomped.
 
         This function has the same parameter and a similar behaviour to the
-        random_file method.
+        random_file method. Note, that -check still gets the filename and
+        not the filecontent.
 
   EXPORT
 
@@ -103,8 +109,8 @@ TODO
     I think, I'll need to expand the options. Instead of only one directory,
     it should be possible to take a random file from some directories.
 
-    The -check option doesn't except a string looking like regexp. In future
-    versions there should be the possibility of passing a string like
+    The -check option doesn't except a string looking like a regexp. In
+    future versions there should be the possibility of passing a string like
     '/..../' instead of the regexp qr/.../';
 
     To create some aliases for the params is a good idea, too. I thought to
@@ -119,10 +125,11 @@ TODO
 
       my $fname = random_file( -d => [$dir1, $dir2, $dir3, ...], -r => 1, -c => sub {-M < 7} );
 
-    The "content_of_random_file" method always returns an array, even in
-    scalar context. I think it's useful that it returns the content as one
-    string in scalar context. Also a -firstline option could be useful.
-    Later -randomline option should be implemented, too.
+    A "-firstline" or "-lines =" [1 .. 10]> option for the
+    "content_of_random_file" could be useful. Later something like
+    "-randomline" option should be implemented, too. (Making the same as
+    "random_line( random_file( ... ) )") "content_of_random_file" is very
+    long, perhaps I'll implement a synonym "corf".
 
     Also speed could be improved, as I tried to write the code very
     readable, but wasted sometimes a little bit speed. (E.g. missing -check
@@ -133,10 +140,9 @@ TODO
     Using unknown params should bring a warning. At the moment they are
     ignored.
 
-    The next thing, I'll implement is the scalar context of
-    "content_of_random_file".
+    The next thing, I'll implement is the "random_line" function.
 
-    Just have a look some hours later.
+    Please feel free to suggest me anything what could be useful.
 
 BUGS
     Oh, I hope none. I still have more test lines than function code.

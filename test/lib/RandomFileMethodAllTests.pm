@@ -1,6 +1,7 @@
 package RandomFileMethodAllTests;
 use base qw/RandomFileSimpleDirOption
             RandomFileCheckOption
-			RandomFileRecursiveOption/;
+			RandomFileRecursiveOption
+			RandomFilePassesPathsToCheckRoutine/;
 
 1;
