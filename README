@@ -1,0 +1,76 @@
+File/Random version 0.01
+========================
+
+NAME
+
+    File::Random - Perl module for random selecting of a file
+
+SYNOPSIS
+      use File::Random qw/random_file/;
+ 
+      my $fname = random_file();
+
+DESCRIPTION
+    This module simplifies the routine job of selecting a random file. (As
+    you can find at CGI scripts).
+
+    It's done, because it's boring, always to write something like
+
+      my @files = (<*.*>);
+      my $randf = $files[rand @files];
+  
+    or
+
+      opendir DIR, " ... " or die " ... ";
+      my @files = grep {-f ...} (readdir DIR);
+      closedir DIR;
+      my $randf = $files[rand @files];
+ 
+  FUNCTIONS
+
+    random_file
+        Returns a randomly selected file(name) from the current directory.
+        If the directory is empty, undef will be returned.
+
+  EXPORT
+
+    None by default.
+
+TODO
+    In this version, there's only a random file from the actual directory
+    returned. I also want to make it possible to write:
+
+      my $fname = random_file( -dir => '...', -recursive => 1, -check     => qr/\.html/ );
+
+    or even:
+
+      my $fname = random_file( -dir => [$dir1, $dir2, $dir3, ...], -r => 1, -check => sub {-M < 7} );
+
+    I also want to add a method "content_of_random_file" and "random_line".
+
+    The next thing I'll do is to give the user the possibility of specifying
+    the directory.
+
+    Just have a look some hours later.
+	
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  Test::More
+
+COPYRIGHT AND LICENCE
+
+Put the correct copyright and licence information here.
+
+Copyright (C) 2002 Janek Schleicher, <bigj@kamelfreund.de>
